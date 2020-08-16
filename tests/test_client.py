@@ -57,10 +57,10 @@ def init_db():
     # tear down when finished!
     db.drop_all()
 
-
+@pytest.mark.requests
 class TestRequests:
 
-    def test_get_request(self, test_client, init_db):
+    def test_get_request(self, test_client, init_db) -> None:
         """
         Test get request from DB to get details of driver
         using the licence_number.
@@ -74,7 +74,7 @@ class TestRequests:
         assert driver_json.get('gender_male') == True
         assert driver_json.get('licence_number') == 'HILLM803048GJ'
 
-    def test_get_all_licence_requests(self, test_client, init_db):
+    def test_get_all_licence_requests(self, test_client, init_db) -> None:
         """
         Test gets ALL licence_numbers from DB and returns a list of
         all licence_numbers.
@@ -84,7 +84,7 @@ class TestRequests:
         assert isinstance(eval(response.get_data()), list)
         assert eval(response.get_data()) == ['HILLM803048GJ', 'MATEL958236A9']
 
-    def test_post_request(self, test_client, init_db):
+    def test_post_request(self, test_client, init_db) -> None:
         """
         Test post request to DB. 
 

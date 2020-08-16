@@ -13,7 +13,7 @@ import pytest
 
 
 @pytest.fixture
-def user_input_small_init():
+def user_input_small_init() -> NameToLicence:
     """Female User"""
     firstname = "Jane"
     middlename = "Brie"
@@ -23,7 +23,7 @@ def user_input_small_init():
 
 
 @pytest.fixture
-def user_input_large_init():
+def user_input_large_init() -> NameToLicence:
     """Male User"""
     firstname = "Gary"
     middlename = None
@@ -33,7 +33,7 @@ def user_input_large_init():
 
 
 @pytest.fixture
-def user_input_edge_case_1_init():
+def user_input_edge_case_1_init() -> NameToLicence:
     """Male with double barrelled last name"""
     firstname = "Richard"
     middlename = "May"
@@ -43,7 +43,7 @@ def user_input_edge_case_1_init():
 
 
 @pytest.fixture
-def user_input_edge_case_2_init():
+def user_input_edge_case_2_init() -> NameToLicence:
     """Female with double barrelled last name"""
     firstname = "Christina"
     middlename = "Jay-Wise"
@@ -53,7 +53,7 @@ def user_input_edge_case_2_init():
 
 
 @pytest.fixture
-def user_input_incorrect_date_init():
+def user_input_incorrect_date_init() -> NameToLicence:
     firstname = "Jimmy"
     middlename = "Mike"
     lastname = "Christakis"
@@ -64,15 +64,15 @@ def user_input_incorrect_date_init():
 @pytest.mark.tools
 class TestNamesToLicence:
 
-    def test_first_five_small(self, user_input_small_init):
+    def test_first_five_small(self, user_input_small_init) -> None:
         assert user_input_small_init.first_five() == "DOE99"
 
-    def test_first_five_large(self, user_input_large_init, user_input_edge_case_1_init, user_input_edge_case_2_init):
+    def test_first_five_large(self, user_input_large_init, user_input_edge_case_1_init, user_input_edge_case_2_init) -> None:
         assert user_input_large_init.first_five() == "LINEK"
         assert user_input_edge_case_1_init.first_five() == "ANJOH"
         assert user_input_edge_case_2_init.first_five() == "CTRI9"
 
-    def test_date_format(self, user_input_incorrect_date_init):
+    def test_date_format(self, user_input_incorrect_date_init) -> None:
         ntl_user = user_input_incorrect_date_init
         try:
             date = ntl_user.date
@@ -80,15 +80,15 @@ class TestNamesToLicence:
             # check message of error is correct
             assert err.args[0] == "Incorrect date format. Must be of type YYYY-MM-DD."
 
-    def test_second_six(self, user_input_small_init, user_input_large_init):
+    def test_second_six(self, user_input_small_init, user_input_large_init) -> None:
         assert user_input_small_init.second_six(male=False) == "953267"
         assert user_input_large_init.second_six(male=True) == "611300"
 
-    def test_last_two(self, user_input_small_init, user_input_large_init):
+    def test_last_two(self, user_input_small_init, user_input_large_init) -> None:
         assert user_input_small_init.last_two() == "JB"
         assert user_input_large_init.last_two() == "G9"
 
-    def test_convert(self, user_input_small_init, user_input_large_init, user_input_edge_case_1_init, user_input_edge_case_2_init):
+    def test_convert(self, user_input_small_init, user_input_large_init, user_input_edge_case_1_init, user_input_edge_case_2_init) -> None:
         assert user_input_small_init.convert(male=False) == "DOE99953267JB"
         assert user_input_large_init.convert(male=True) == "LINEK611300G9"
         assert user_input_edge_case_1_init.convert(
@@ -103,7 +103,7 @@ Test table mapper: LicenceModel
 
 
 @pytest.fixture
-def new_driver():
+def new_driver() -> None:
     data = {"first_name": "Josh",
             "middle_name": None,
             "last_name": "King",
@@ -118,7 +118,7 @@ def new_driver():
 @pytest.mark.model
 class TestLicenceModel:
 
-    def test_new_driver(self, new_driver):
+    def test_new_driver(self, new_driver: LicenceModel) -> None:
         """
         Given a Licence Model test to see if
         all fields are correctly defined.
