@@ -1,31 +1,11 @@
-from flask import Flask
-from flask_restful import Api, Resource, reqparse, abort, fields, marshal_with
-from flask_sqlalchemy import SQLAlchemy
-# Import our processing tools
-from tools import NameToLicence
+from flask_restful import Resource, reqparse, abort, fields, marshal_with
+from App.tools import NameToLicence
+from App.models import LicenceModel
 from datetime import datetime
 
-# Initialise app
-app = Flask(__name__)
-
-api = Api(app)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
-db = SQLAlchemy(app)
-
-
-class LicenceModel(db.Model):
-    """Constructor mapping to Licences Table."""
-    id = db.Column(db.Integer, primary_key=True)
-    first_name = db.Column(db.String(50), nullable=False)
-    middle_name = db.Column(db.String(50), nullable=True)
-    last_name = db.Column(db.String(50), nullable=False)
-    date_of_birth = db.Column(db.Date, nullable=False)
-    gender_male = db.Column(db.Boolean, nullable=False)
-    licence_number = db.Column(db.String(13), nullable=False, unique=True)
-
-    def __repr__(self) -> str:
-        return f"LicenceModel(first_name={first_name}, last_name={last_name}, date_of_birth={date_of_birth})"
-
+# Import api in package
+from App import api
+from App import db
 
 # RequestParser adds regulation to our parsed arguments.
 licence_post_args = reqparse.RequestParser()
@@ -132,6 +112,3 @@ class LicencePOST(Resource):
 api.add_resource(LicenceGET, "/licence/<string:licence_number>")
 api.add_resource(LicenceGETALL, "/licence")
 api.add_resource(LicencePOST, "/licences")
-
-if __name__ == "__main__":
-    app.run(debug=True, port='8080')

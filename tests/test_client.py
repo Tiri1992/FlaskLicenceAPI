@@ -2,9 +2,9 @@
 Test: Post/Get requests
 """
 import pytest
-from app import app
-from app import db
-from app import LicenceModel
+from .context import app
+from .context import db
+from .context import LicenceModel
 from datetime import datetime
 
 

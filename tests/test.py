@@ -6,9 +6,9 @@ Questionable edge cases to discuss:
 - Two users same names/gender born on 1900-01-01 and 2000-01-01 will have identical licence numbers.
 - Two drivers with identical names, same birthdays and same gender.
 """
-from tools import NameToLicence
-from tools import IncorrectDateFormat
-from app import LicenceModel
+from .context import NameToLicence
+from .context import IncorrectDateFormat
+from .context import LicenceModel
 import pytest
 
 
