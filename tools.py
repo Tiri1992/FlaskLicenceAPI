@@ -12,20 +12,45 @@ class IncorrectDateFormat(Exception):
 
 class NameToLicence:
     """
-    Converts Firstname, Lastname, DOB -> Driving Licence Number.
+    The NameToLicence object contains details of the driver.
+    Methods available such as .convert() outputs Licence Number.
+
+    Parameters
+    ----------
+    firstname : str
+        First name of driver.
+
+    middlename : str
+        Middle name of driver.
+
+    lastname : str
+        Last name of driver.
+
+    date_of_birth : str
+        Drivers date of birth. 
     """
 
-    def __init__(self, firstname: str, middlename: str, lastname: str, dob: str) -> None:
-        self.firstname = firstname
-        self.middelname = middlename
-        self.lastname = lastname
-        self.dob = dob
+    def __init__(self, first_name: str, middle_name: str, last_name: str, date_of_birth: str) -> None:
+        self.firstname = first_name
+        self.middelname = middle_name
+        self.lastname = last_name
+        self.dob = date_of_birth
 
     @staticmethod
     def double_barrelled_names(name: str) -> str:
         """
         Cleans double barreled names to a format eligible to
         be processed for the .first_five() method.
+
+        Parameters
+        ----------
+        name : str
+            Double barrelled name to be concatenated.
+
+        Returns
+        -------
+        concatenated name
+            The name of driver is concatenated into a single string.
         """
         split = re.split(r"-|\s|_", name)
         if len(split) > 1:
@@ -37,7 +62,7 @@ class NameToLicence:
     @property
     def date(self) -> datetime:
         try:
-            date_obj = datetime.fromisoformat(self.dob)
+            date_obj = datetime.fromisoformat(str(self.dob))
         except ValueError:
             # Wanted to implement a user-defined exception here.
             raise IncorrectDateFormat(
@@ -45,7 +70,7 @@ class NameToLicence:
         return date_obj
 
     def first_five(self) -> str:
-        """Adjusts for the first 5 elements"""
+        """Processes elements 1 - 5 of the licence number"""
         # helper function for elements 1-5:
         lastname_clean = NameToLicence.double_barrelled_names(self.lastname)
         lastname_adj = lastname_clean.ljust(5, '9').upper()[:5]
@@ -53,11 +78,12 @@ class NameToLicence:
 
     def second_six(self, male: bool) -> str:
         """
-        Adjusts for the next 6 elements.
+        Processes elements 6 - 11 of the licence number
 
-        Parameters:
-        -----------
-        male: bool, This represents users gender.
+        Parameters
+        ----------
+        male: bool
+            This represents users gender.
         """
         # helper function for elements 6-11
         decade = str(self.date.year)[-2]
@@ -76,7 +102,7 @@ class NameToLicence:
             return result
 
     def last_two(self) -> str:
-        """Adjusts for the last two elements of the 13 needed to be processed."""
+        """Processes elements 12 - 13 of the licence number"""
         # Helper function for elements 12-13
         if not self.middelname:
             # User has no middle name

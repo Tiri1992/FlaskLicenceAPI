@@ -4,9 +4,11 @@ Test Suite for tools.py
 Questionable edge cases to discuss:
 
 - Two users same names/gender born on 1900-01-01 and 2000-01-01 will have identical licence numbers.
+- Two drivers with identical names, same birthdays and same gender.
 """
 from tools import NameToLicence
 from tools import IncorrectDateFormat
+from app import LicenceModel
 import pytest
 
 
@@ -59,6 +61,7 @@ def user_input_incorrect_date_init():
     return NameToLicence(firstname, middlename, lastname, dob)
 
 
+@pytest.mark.tools
 class TestNamesToLicence:
 
     def test_first_five_small(self, user_input_small_init):
@@ -92,3 +95,37 @@ class TestNamesToLicence:
             male=True) == "ANJOH804288RM"
         assert user_input_edge_case_2_init.convert(
             male=False) == "CTRI9657128CJ"
+
+
+"""
+Test table mapper: LicenceModel
+"""
+
+
+@pytest.fixture
+def new_driver():
+    data = {"first_name": "Josh",
+            "middle_name": None,
+            "last_name": "King",
+            "date_of_birth": "1972-07-11",
+            "gender_male": True,
+            "licence_number": "KING9707112J9"}
+
+    user = LicenceModel(**data)
+    return user
+
+
+@pytest.mark.model
+class TestLicenceModel:
+
+    def test_new_driver(self, new_driver):
+        """
+        Given a Licence Model test to see if
+        all fields are correctly defined.
+        """
+        assert new_driver.first_name == "Josh"
+        assert not isinstance(new_driver.middle_name, str)
+        assert new_driver.last_name != "kinG"
+        assert new_driver.date_of_birth == "1972-07-11"
+        assert new_driver.gender_male
+        assert new_driver.licence_number == "KING9707112J9"
