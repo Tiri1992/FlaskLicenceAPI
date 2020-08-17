@@ -7,6 +7,9 @@ from datetime import datetime
 from App import api
 from App import db
 
+# type hints
+from typing import List, Tuple, Dict, Union
+
 # RequestParser adds regulation to our parsed arguments.
 licence_post_args = reqparse.RequestParser()
 licence_post_args.add_argument(
@@ -38,14 +41,19 @@ resource_field = {
 
 class LicenceGET(Resource):
     @marshal_with(resource_field)
-    def get(self, licence_number: str) -> dict:
+    def get(self, licence_number: str) -> Tuple[Dict[str, Union[str,int]], int]:
         """
         GET request from database.
 
         Parameters
         ----------
-        licence_number : str,
+        licence_number
             Unique identifier of driver.
+
+        Returns
+        -------
+        dict
+            single row of fields from db in the form of fields: value.
         """
         result = LicenceModel.query.filter_by(
             licence_number=licence_number).first()
@@ -56,9 +64,14 @@ class LicenceGET(Resource):
 
 
 class LicenceGETALL(Resource):
-    def get(self) -> list:
+    def get(self) -> Tuple[List[str], int]:
         """
         GET all licences available from database.
+
+        Returns
+        -------
+        list
+            A list of all licence_numbers in db.
         """
         # Get all licence_numbers available
         result = db.session.query(LicenceModel.licence_number)
@@ -84,6 +97,12 @@ class LicencePOST(Resource):
             'date_of_birth': str,
             'gender_male': bool
         }
+
+        Returns
+        -------
+        str
+            Will return a 13 digit licence_number with 
+            respect to the input request body.
         """
         # Parse our arguments so we can access them and persist new data to our db
         args = licence_post_args.parse_args()
@@ -91,6 +110,13 @@ class LicencePOST(Resource):
         ntl = NameToLicence(
             first_name=args['first_name'], middle_name=args['middle_name'], last_name=args['last_name'], date_of_birth=args['date_of_birth'])
         gen_licence_num = ntl.convert(male=args['gender_male'])
+        # Validate length of names to be up to 50 characters: First_name, Last_name
+        if not all(map(lambda row: 0 < len(row) <= 50, [args['first_name'], args['last_name']])):
+            abort(400, message="First and Last name should be between 1 and 50 characters.")
+        # Validate length of middle name: This is optional so can take None, but need to check if str is parsed
+        if not args['middle_name']:
+            if not (0 < len(args['middle_name']) <= 50):
+                abort(400, message="Middle name can either be blank or up to 50 characters long.")
         # Check database if licence number already exists
         result = LicenceModel.query.filter_by(
             licence_number=gen_licence_num).first()
