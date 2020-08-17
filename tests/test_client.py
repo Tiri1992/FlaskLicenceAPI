@@ -113,13 +113,22 @@ class TestRequests:
         Test bad post request to see if names with more than
         50 characters are declined.
         """
-
+        # Test long first name
         driver4 = {'first_name': 'hello'*20,
                   'middle_name': None,
                   'last_name': 'Grinders',
                   'date_of_birth': '1993-03-04',
                   'gender_male': True}
+        # Test long middle name
+        driver5 = {'first_name': 'Michael',
+                  'middle_name': 'WeirdName'*20,
+                  'last_name': 'Shower',
+                  'date_of_birth': '1974-01-24',
+                  'gender_male': True}
         response = test_client.post("/licences", json=driver4)
         assert response.status_code == 400
         assert response.json == {'message': 'First and Last name should be between 1 and 50 characters.'}
-
+        
+        response = test_client.post("/licences", json=driver5)
+        assert response.status_code == 400
+        assert response.json == {'message': 'Middle name can either be blank or up to 50 characters long.'}
