@@ -27,6 +27,10 @@ def test_client():
 
 @pytest.fixture
 def init_db():
+    """
+    Set up a database instance for each test
+    and tears down when complete.
+    """
     # Create the db (overwrites existing) and table
     db.create_all()
 
@@ -81,8 +85,8 @@ class TestRequests:
         """
         response = test_client.get("/licence")
         assert response.status_code == 200
-        assert isinstance(eval(response.get_data()), list)
-        assert eval(response.get_data()) == ['HILLM803048GJ', 'MATEL958236A9']
+        assert isinstance(response.json, list)
+        assert response.json == ['HILLM803048GJ', 'MATEL958236A9']
 
     def test_post_request(self, test_client, init_db) -> None:
         """
@@ -102,5 +106,20 @@ class TestRequests:
         assert isinstance(response.content_type, str)
         assert response.status_code == 200
         # Returns a 13 digit licence_number
-        # Eval turns bytes -> str
-        assert eval(response.data) == "MAYWE702247FD"
+        assert response.json == "MAYWE702247FD"
+
+    def test_bad_post_request(self, test_client, init_db) -> None:
+        """
+        Test bad post request to see if names with more than
+        50 characters are declined.
+        """
+
+        driver4 = {'first_name': 'hello'*20,
+                  'middle_name': None,
+                  'last_name': 'Grinders',
+                  'date_of_birth': '1993-03-04',
+                  'gender_male': True}
+        response = test_client.post("/licences", json=driver4)
+        assert response.status_code == 400
+        assert response.json == {'message': 'First and Last name should be between 1 and 50 characters.'}
+
