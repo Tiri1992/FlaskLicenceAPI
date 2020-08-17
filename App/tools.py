@@ -17,17 +17,21 @@ class NameToLicence:
 
     Parameters
     ----------
-    firstname : str
+    firstname
         First name of driver.
 
-    middlename : str
+    middlename
         Middle name of driver.
 
-    lastname : str
+    lastname
         Last name of driver.
 
     date_of_birth : str
-        Drivers date of birth. 
+        Drivers date of birth.
+
+    Returns
+    -------
+    None
     """
 
     def __init__(self, first_name: str, middle_name: str, last_name: str, date_of_birth: str) -> None:
@@ -44,12 +48,12 @@ class NameToLicence:
 
         Parameters
         ----------
-        name : str
+        name
             Double barrelled name to be concatenated.
 
         Returns
         -------
-        concatenated name
+        str
             The name of driver is concatenated into a single string.
         """
         split = re.split(r"-|\s|_", name)
@@ -70,7 +74,14 @@ class NameToLicence:
         return date_obj
 
     def first_five(self) -> str:
-        """Processes elements 1 - 5 of the licence number"""
+        """
+        Processes elements 1 - 5 of the licence number
+
+        Returns
+        -------
+        str
+            Elements 1 - 5 of the licence number.
+        """
         # helper function for elements 1-5:
         lastname_clean = NameToLicence.double_barrelled_names(self.lastname)
         lastname_adj = lastname_clean.ljust(5, '9').upper()[:5]
@@ -82,8 +93,13 @@ class NameToLicence:
 
         Parameters
         ----------
-        male: bool
+        male
             This represents users gender.
+
+        Returns
+        -------
+        str
+            Elements 6 - 11 of the licence number.
         """
         # helper function for elements 6-11
         decade = str(self.date.year)[-2]
@@ -102,7 +118,14 @@ class NameToLicence:
             return result
 
     def last_two(self) -> str:
-        """Processes elements 12 - 13 of the licence number"""
+        """
+        Processes elements 12 - 13 of the licence number.
+        
+        Returns
+        -------
+        str
+            Elements 12 - 13 of the licence number.
+        """
         # Helper function for elements 12-13
         if not self.middelname:
             # User has no middle name
@@ -111,7 +134,19 @@ class NameToLicence:
             return self.firstname[0].upper() + self.middelname[0].upper()
 
     def convert(self, male: bool) -> str:
-        """Returns processed Driving Licence Number"""
+        """
+        Converts driver details into licence_number entirely.
+        
+        Parameters
+        ----------
+        male
+            If driver is male.
+        
+        Returns
+        -------
+        str
+            Licence number of the driver details passed into constructor.
+        """
         if male:
             result = self.first_five() + self.second_six(male=True) + self.last_two()
             return result
