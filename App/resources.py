@@ -114,7 +114,7 @@ class LicencePOST(Resource):
         if not all(map(lambda row: 0 < len(row) <= 50, [args['first_name'], args['last_name']])):
             abort(400, message="First and Last name should be between 1 and 50 characters.")
         # Validate length of middle name: This is optional so can take None, but need to check if str is parsed
-        if not args['middle_name']:
+        if args['middle_name']:
             if not (0 < len(args['middle_name']) <= 50):
                 abort(400, message="Middle name can either be blank or up to 50 characters long.")
         # Check database if licence number already exists
